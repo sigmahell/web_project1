@@ -12,8 +12,8 @@ $featured_coach = [
     'banner' => 'images/john.jpg',
     'bio' => 'I played professionally for years, competed at a high level, and won a lot of tournaments. Dedicated to elevating your gameplay.',
     'sessions' => [
-        ['title' => '1-on-1 Coaching session', 'details' => '1 Session • 1.5 hrs', 'price' => '$55'],
-        ['title' => '2-Session Pack – Offer of the Month', 'details' => '2 Sessions • 3 hrs', 'price' => '$99']
+        ['title' => '1-on-1 Coaching session', 'details' => '1 Session • 1.5 hrs', 'price' => '₱3,000'],
+        ['title' => '2-Session Pack – Offer of the Month', 'details' => '2 Sessions • 3 hrs', 'price' => '₱5,500']
     ],
     'reviews' => [
         ['user' => 'Kin', 'time' => '8 days ago', 'text' => 'It is my first session and I already learned a lot. Looking forward to more hours.'],
@@ -33,7 +33,7 @@ $pro_coaches = [
         'image' => 'images/john.jpg',
         'banner' => 'images/john.jpg',
         'bio' => 'Professional & Structured coaching. Free consultation available to analyze your replay.',
-        'session' => ['title' => 'Professional & Structured', 'details' => '3 Sessions • 3 hrs', 'price' => '$60']
+        'session' => ['title' => 'Professional & Structured', 'details' => '3 Sessions • 3 hrs', 'price' => '₱3,500']
     ],
     [
         'rank' => '3',
@@ -44,7 +44,7 @@ $pro_coaches = [
         'image' => 'images/john.jpg',
         'banner' => 'images/john.jpg',
         'bio' => "Hey, I'm Kicknay! High-MMR competitive player currently coaching for regional esports teams.",
-        'session' => ['title' => 'Personalized 1-on-1 Replay', 'details' => '1 Session • 1 hr', 'price' => '$10']
+        'session' => ['title' => 'Personalized 1-on-1 Replay', 'details' => '1 Session • 1 hr', 'price' => '₱600']
     ],
     [
         'rank' => '4',
@@ -55,10 +55,9 @@ $pro_coaches = [
         'image' => 'images/john.jpg',
         'banner' => 'images/john.jpg',
         'bio' => 'Ex-Xtreme Gaming pro player. Hi everyone, I am poloson, ready to teach high-tier macro.',
-        'session' => ['title' => '1 to 1 Coaching session', 'details' => '1 Session • 1 hr', 'price' => '$40']
+        'session' => ['title' => '1 to 1 Coaching session', 'details' => '1 Session • 1 hr', 'price' => '₱2,300']
     ]
 ];
-
 // 3. Community / List Coaches (Horizontal Rows)
 $community_coaches = [
     [
@@ -69,8 +68,8 @@ $community_coaches = [
         'image' => 'images/john.jpg',
         'bio' => 'Unlock your full potential with a coach who has competed alongside the biggest names in the scene.',
         'packages' => [
-            ['title' => 'First time coaching + free time', 'price' => '$70'],
-            ['title' => '3 Hours Package', 'price' => '$94.50']
+            ['title' => 'First time coaching + free time', 'price' => '₱4,000'],
+            ['title' => '3 Hours Package', 'price' => '₱5,400']
         ]
     ],
     [
@@ -81,8 +80,8 @@ $community_coaches = [
         'image' => 'images/john.jpg',
         'bio' => "Hi I'm Khezu. I'm a professional player with 7+ years of top-level competitive experience.",
         'packages' => [
-            ['title' => 'Replay review', 'price' => '$80'],
-            ['title' => 'Draft coaching + insights', 'price' => '$300']
+            ['title' => 'Replay review', 'price' => '₱4,500'],
+            ['title' => 'Draft coaching + insights', 'price' => '₱17,000']
         ]
     ],
     [
@@ -93,8 +92,8 @@ $community_coaches = [
         'image' => 'images/john.jpg',
         'bio' => 'Competitive player known for high-tier lane dominance and aggressive pacing.',
         'packages' => [
-            ['title' => 'Mid Laning Focus', 'price' => '$40'],
-            ['title' => 'Comprehensive Coaching', 'price' => '$50']
+            ['title' => 'Mid Laning Focus', 'price' => '₱2,300'],
+            ['title' => 'Comprehensive Coaching', 'price' => '₱2,800']
         ]
     ],
     [
@@ -105,12 +104,13 @@ $community_coaches = [
         'image' => 'images/john.jpg',
         'bio' => "Pro player here to enable you to get what you want out of this game effectively.",
         'packages' => [
-            ['title' => 'Free Intro (15 mins)', 'price' => '$0'],
-            ['title' => 'Live Coaching', 'price' => '$59'],
-            ['title' => 'Ultimate Guide to Ranking UP', 'price' => '$459']
+            ['title' => 'Free Intro (15 mins)', 'price' => '₱0'],
+            ['title' => 'Live Coaching', 'price' => '₱3,300'],
+            ['title' => 'Ultimate Guide to Ranking UP', 'price' => '₱26,000']
         ]
     ]
 ];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -155,7 +155,12 @@ $community_coaches = [
                                     <strong><?= $s['title']; ?></strong>
                                     <div class="sub-text"><?= $s['details']; ?></div>
                                 </div>
-                                <span class="price-pill"><?= $s['price']; ?></span>
+                                <div class="session-action">
+                                    <span class="price-text"><?= $s['price']; ?></span>
+                                    <a href="index.php?coach=<?= urlencode($featured_coach['name']); ?>&session=<?= urlencode($s['title']); ?>#contact" class="book-btn">
+                                        Book
+                                    </a>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -178,73 +183,85 @@ $community_coaches = [
             </div>
         </section>
 
-        <!-- SECTION 2: PRO COACHES GRID -->
-        <section class="coach-section">
-            <h2 class="section-title">PRO COACHES</h2>
-            
-            <div class="pro-grid">
-                <?php foreach ($pro_coaches as $coach): ?>
-                    <div class="pro-card">
-                        <div class="pro-card-header">
-                            <img src="<?= $coach['banner']; ?>" class="pro-banner-img" alt="Banner">
-                            <span class="rank-badge"><?= $coach['rank']; ?></span>
-                        </div>
-                        <div class="pro-card-body">
-                            <div class="pro-user-row">
-                                <img src="<?= $coach['image']; ?>" class="pro-avatar" alt="<?= $coach['name']; ?>">
-                                <div>
-                                    <h4><?= $coach['name']; ?></h4>
-                                    <span class="sub-text"><?= $coach['community']; ?></span>
-                                </div>
-                            </div>
-                            <div class="coach-meta" style="margin: 0.5rem 0;">
-                                <span>★ <?= $coach['rating']; ?></span> • <span><?= $coach['tz']; ?></span>
-                            </div>
-                            <p class="pro-bio"><?= $coach['bio']; ?></p>
-                            
-                            <div class="session-row compact">
-                                <div>
-                                    <strong><?= $coach['session']['title']; ?></strong>
-                                    <div class="sub-text"><?= $coach['session']['details']; ?></div>
-                                </div>
-                                <span class="price-pill"><?= $coach['session']['price']; ?></span>
-                            </div>
+  <!-- SECTION 2: PRO COACHES GRID -->
+<section class="coach-section">
+    <h2 class="section-title">PRO COACHES</h2>
+    
+    <div class="pro-grid">
+        <?php foreach ($pro_coaches as $coach): ?>
+            <div class="pro-card">
+                <div class="pro-card-header">
+                    <img src="<?= $coach['banner']; ?>" class="pro-banner-img" alt="Banner">
+                    <span class="rank-badge"><?= $coach['rank']; ?></span>
+                </div>
+                <div class="pro-card-body">
+                    <div class="pro-user-row">
+                        <img src="<?= $coach['image']; ?>" class="pro-avatar" alt="<?= $coach['name']; ?>">
+                        <div>
+                            <h4><?= $coach['name']; ?></h4>
+                            <span class="sub-text"><?= $coach['community']; ?></span>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                    <div class="coach-meta" style="margin: 0.5rem 0;">
+                        <span>★ <?= $coach['rating']; ?></span> • <span><?= $coach['tz']; ?></span>
+                    </div>
+                    <p class="pro-bio"><?= $coach['bio']; ?></p>
+                    
+                    <div class="session-row compact">
+                        <div>
+                            <strong><?= $coach['session']['title']; ?></strong>
+                            <div class="sub-text"><?= $coach['session']['details']; ?></div>
+                        </div>
+                        <div class="session-action">
+                            <span class="price-text"><?= $coach['session']['price']; ?></span>
+                            <a href="index.php?coach=<?= urlencode($coach['name']); ?>&session=<?= urlencode($coach['session']['title']); ?>#contact" class="book-btn">
+                                Book
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </section>
+        <?php endforeach; ?>
+    </div>
+</section>
 
         <!-- SECTION 3: COMMUNITY COACHES (ROWS) -->
-        <section class="coach-section">
-            <h2 class="section-title">COMMUNITY COACHES</h2>
-            
-            <div class="community-list">
-                <?php foreach ($community_coaches as $coach): ?>
-                    <div class="community-row">
-                        <div class="comm-rank"><?= $coach['rank']; ?></div>
-                        <img src="<?= $coach['image']; ?>" class="comm-avatar" alt="<?= $coach['name']; ?>">
-                        
-                        <div class="comm-main">
-                            <div class="comm-header">
-                                <h4><?= $coach['name']; ?></h4>
-                                <span class="coach-meta">★ <?= $coach['rating']; ?> • <?= $coach['tz']; ?></span>
-                            </div>
-                            <p class="comm-bio"><?= $coach['bio']; ?></p>
-                            
-                            <div class="comm-packages">
-                                <?php foreach ($coach['packages'] as $pkg): ?>
-                                    <div class="package-tag">
-                                        <span><?= $pkg['title']; ?></span>
-                                        <strong class="tag-price"><?= $pkg['price']; ?></strong>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
+         <!-- SECTION 3: COMMUNITY COACHES (ROWS) -->
+<section class="coach-section">
+    <h2 class="section-title">COMMUNITY COACHES</h2>
+    
+    <div class="community-list">
+        <?php foreach ($community_coaches as $coach): ?>
+            <div class="community-row">
+                <div class="comm-rank"><?= $coach['rank']; ?></div>
+                <img src="<?= $coach['image']; ?>" class="comm-avatar" alt="<?= $coach['name']; ?>">
+                
+                <div class="comm-main">
+                    <div class="comm-header">
+                        <h4><?= $coach['name']; ?></h4>
+                        <span class="coach-meta">★ <?= $coach['rating']; ?> • <?= $coach['tz']; ?></span>
                     </div>
-                <?php endforeach; ?>
+                    <p class="comm-bio"><?= $coach['bio']; ?></p>
+                    
+                    <div class="comm-packages">
+                        <?php foreach ($coach['packages'] as $pkg): ?>
+                            <div class="package-tag">
+                                <span><?= $pkg['title']; ?></span>
+                                <strong class="tag-price"><?= $pkg['price']; ?></strong>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="comm-action">
+                    <a href="index.php?coach=<?= urlencode($coach['name']); ?>#contact" class="book-btn">
+                        Book
+                    </a>
+                </div>
             </div>
-        </section>
+        <?php endforeach; ?>
+    </div>
+</section>
 
     </main>
 

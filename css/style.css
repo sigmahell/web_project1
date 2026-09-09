@@ -684,3 +684,393 @@ footer p {
     color: var(--text-muted);
     opacity: 0.8;
 }
+
+/* ==========================================
+   MOCKUP-EXACT COACHES LAYOUT STYLING
+   ========================================== */
+
+.coaches-container {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem; /* Proper spacing between the 3 sections */
+}
+
+.section-title {
+    color: var(--accent-gold);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+/* --- SECTION 1: FEATURED COACH --- */
+.featured-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.featured-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    border-right: 1px solid var(--border-color);
+    padding-right: 1.5rem;
+}
+
+.badge-number1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+    font-weight: 800;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.featured-avatar {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    border: 2px solid var(--border-color);
+}
+
+.featured-profile h3 {
+    font-size: 1.4rem;
+    color: var(--text-main);
+}
+
+.coach-meta {
+    font-size: 0.85rem;
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.featured-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.banner-crop img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.featured-bio {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.session-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.session-row {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.session-row:hover {
+    border-color: var(--accent-gold);
+    background-color: rgba(234, 179, 8, 0.08);
+    transform: translateX(4px);
+    box-shadow: 0 2px 10px rgba(234, 179, 8, 0.15);
+}
+
+.session-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+
+}
+
+.book-btn {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.book-btn:hover {
+    background-color: #ffd700;
+    transform: translateY(-1px);
+}
+
+.sub-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.price-pill {
+    background-color: var(--accent-gold);
+    color: var(--bg-dark);
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+.price-text {
+    background: transparent;
+    color: var(--accent-gold);
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.featured-reviews {
+    border-left: 1px solid var(--border-color);
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.featured-reviews h4 {
+    font-size: 0.85rem;
+    color: var(--accent-gold);
+    letter-spacing: 1px;
+}
+
+.review-item {
+    background-color: var(--bg-dark);
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.rev-rating {
+    background-color: #22c55e;
+    color: #000;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+}
+
+.rev-user {
+    color: var(--text-main);
+}
+
+.rev-time {
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    margin-left: auto;
+}
+
+/* --- SECTION 2: PRO COACHES (GRID) --- */
+.pro-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.pro-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.pro-card-header {
+    position: relative;
+}
+
+.pro-banner-img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.rank-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: var(--accent-gold);
+    border: 1px solid var(--accent-gold);
+    font-weight: 800;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.75rem;
+}
+
+.pro-card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.pro-user-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.pro-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.pro-bio {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.session-row.compact {
+    padding: 0.6rem 0.8rem;
+}
+
+/* --- SECTION 3: COMMUNITY COACHES (ROWS) --- */
+.community-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.community-row {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover highlight effect */
+.community-row:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(234, 179, 8, 0.12);
+}
+
+.comm-action {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.comm-rank {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    width: 25px;
+}
+
+.comm-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.comm-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.comm-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.comm-header h4 {
+    color: var(--text-main);
+    font-size: 1.05rem;
+}
+
+.comm-bio {
+    font-size: 0.825rem;
+    color: var(--text-muted);
+}
+
+.comm-packages {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.package-tag {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tag-price {
+    color: var(--accent-gold);
+}
+
+/* Responsive adjustments */
+@media (max-width: 950px) {
+    .featured-card {
+        grid-template-columns: 1fr;
+    }
+    .pro-grid {
+        grid-template-columns: 1fr;
+    }
+}
