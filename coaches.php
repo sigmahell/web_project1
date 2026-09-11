@@ -1,6 +1,6 @@
 <?php
 $title = "Coaches - NightLock";
-$description = "Learn from top-tier Deadlock players and pro coaches.";
+$description = "Learn from the best Deadlock players.";
 
 // 1. Featured Coach (#1)
 $featured_coach = [
