@@ -24,7 +24,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <!-- Dynamic Auth Buttons -->
     <div class="auth-buttons"> 
         <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="my-bookings.php"><button type="button" id="login-btn">MY BOOKINGS</button></a>
+            <a href="profile.php"><button type="button" id="login-btn">MY PROFILE</button></a>
             <a href="logout.php"><button type="button">LOGOUT</button></a>
         <?php else: ?>
             <a href="login.php"><button type="button" id="login-btn">LOGIN</button></a>
