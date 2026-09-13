@@ -47,7 +47,6 @@ shuffle($b_tier_heroes);
             <div>
                 <p>Your occult go-to resource for Deadlock match tracking, tier lists, and forbidden hero statistics. Uncover the truths hidden in the shadows.</p>
             </div>
-            <button type="button" class="ent-button">ENTER THE ARCHIVE</button>
         </section>
 
         <!-- tier lists section -->

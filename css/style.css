@@ -1399,3 +1399,75 @@ footer p {
     color: var(--text-muted, #8a8d9b);
     font-size: 0.9rem;
 }
+
+/* ==========================================
+   ADMIN DASHBOARD STYLES
+   ========================================== */
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--card-bg, #12151c);
+    border: 1px solid var(--border-color, #2a2e3d);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-gold, #f39c12);
+    margin-top: 0.5rem;
+}
+
+.admin-table-wrapper {
+    background: var(--card-bg, #12151c);
+    border: 1px solid var(--border-color, #2a2e3d);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-table th, 
+.admin-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color, #2a2e3d);
+}
+
+.admin-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted, #8a8d9b);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.btn-approve {
+    background-color: #198754;
+    color: #ffffff;
+    border: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-approve:hover {
+    background-color: #157347;
+}
+
+.admin-action-group {
+    display: flex;
+    gap: 0.5rem;
+}

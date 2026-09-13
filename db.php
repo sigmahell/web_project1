@@ -1,16 +1,21 @@
 <?php
-$host     = 'localhost';
-$dbname   = 'nightlock_db';
-$username = 'root';
-$password = ''; // Default password for WampServer MySQL is empty
+$host    = 'localhost';
+$db      = 'nightlock_db';
+$user    = 'root';
+$pass    = '';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
-    ]);
-} catch (PDOException $e) {
-    die("Database Connection Error: " . $e->getMessage());
+     $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+     // Log error internally and show friendly message to user
+     error_log($e->getMessage());
+     die("Database connection failure. Please try again later.");
 }
-?>
