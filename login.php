@@ -23,7 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['steam_id'] = $user['steam_id'];
             $_SESSION['is_admin'] = (int)($user['is_admin'] ?? 0);
 
-            header("Location: coaches.php");
+            if ((int)$user['is_admin'] === 1) {
+                header("Location: admin-dashboard.php");
+            } else {
+                header("Location: coaches.php");
+            }
             exit;
         } else {
             $error = "Invalid email address or password.";
