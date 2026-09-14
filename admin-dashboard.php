@@ -4,13 +4,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once 'db.php';
 
-// Ensure admin access — must be logged in AND have admin role
+// admin access
 if (!isset($_SESSION['user_id']) || (int)$_SESSION['is_admin'] !== 1) {
     header('Location: login.php');
     exit;
 }
 
-// Fetch all booking stats in a single query instead of 3 separate ones
+// Fetch all booking stats in a single query instead 
 $stats = $pdo->query("
     SELECT
         COUNT(*) AS total,
@@ -23,7 +23,7 @@ $total_count   = $stats['total'];
 $pending_count = $stats['pending'];
 $approved_count = $stats['approved'];
 
-// Fetch bookings with User Email, Coach, and Booking Date
+
 $sql = "
     SELECT 
         b.id,
