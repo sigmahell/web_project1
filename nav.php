@@ -13,7 +13,7 @@ $isAdmin = isset($_SESSION['is_admin']) && (int)$_SESSION['is_admin'] === 1;
         <h1>NIGHTLOCK</h1>
     </div>
             
-    <!-- Main Navigation (Only shown to regular users and visitors) -->
+    <!-- Main Navigation) -->
     <?php if (!$isAdmin): ?>
     <nav class="nav-links">
         <a href="index.php">HOME</a>
