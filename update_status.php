@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once 'db.php';
 
-// Redirect if not logged in or not an admin
+// Redirect if not logged in or not an adminsis
 if (!isset($_SESSION['user_id']) || (int)$_SESSION['is_admin'] !== 1) {
     header('Location: login.php');
     exit;
