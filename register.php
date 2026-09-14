@@ -6,7 +6,7 @@ $errors = [];
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 1. Sanitization (Trim whitespaces and strip illegal characters)
+    // 1. Sanitization 
     $email    = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
     $steam_id = trim($_POST['steam_id'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Please enter a valid email address.";
     }
 
-    // Steam64 ID validation: Must be exactly 17 numeric digits
+    // Steam ID validation
     if (!preg_match('/^[0-9]{17}$/', $steam_id)) {
         $errors[] = "Steam ID must be a valid 17-digit Steam64 ID.";
     }
