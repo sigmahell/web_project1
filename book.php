@@ -20,7 +20,7 @@ if (empty($coach_name) || empty($session_title)) {
     exit;
 }
 
-// Fetch the real price from the DB — never trust client-supplied price
+// Fetch the real price from the DB 
 $priceStmt = $pdo->prepare("
     SELECT s.price
     FROM coach_sessions s
@@ -31,19 +31,18 @@ $priceStmt = $pdo->prepare("
 $priceStmt->execute([':coach' => $coach_name, ':session' => $session_title]);
 $price = $priceStmt->fetchColumn();
 
-// If no matching session found, redirect back to coaches
+// If no matching session found
 if ($price === false) {
     header("Location: coaches.php");
     exit;
 }
 
-// Strip non-numeric characters for storage (price may include ₱ symbol)
-$price = preg_replace('/[^0-9.]/', '', $price);
+// Strip non-numeric characters for storage (price may include ₱ symbol)e);
 
 // Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($booking_date)) {
 
-    // Server-side date validation — HTML min attribute can be bypassed via DevTools
+    // Server-side date validation
     if (strtotime($booking_date) < time()) {
         $booking_error = "Please select a future date and time for your booking.";
     } else {
