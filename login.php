@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'db.php';
 
 $error = '';    
@@ -9,19 +11,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if (!empty($email) && !empty($password)) {
-        // Fetch user record by email
-        $stmt = $pdo->prepare("SELECT id, email, password_hash, steam_id FROM users WHERE email = :email LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id, email, password_hash, steam_id, is_admin FROM users WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch();
 
-        // Verify password hash
         if ($user && password_verify($password, $user['password_hash'])) {
-            // Regenerate session ID to prevent session fixation attacks
             session_regenerate_id(true);
 
             $_SESSION['user_id']  = $user['id'];
             $_SESSION['email']    = $user['email'];
             $_SESSION['steam_id'] = $user['steam_id'];
+            $_SESSION['is_admin'] = (int)($user['is_admin'] ?? 0);
 
             header("Location: coaches.php");
             exit;
@@ -37,34 +37,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - NightLock</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
     <?php include 'nav.php'; ?>
 
-    <main class="coaches-container" style="max-width: 450px; margin: 3rem auto;">
-        <h2>LOGIN TO YOUR ACCOUNT</h2>
+    <main class="coaches-container">
+        <h2 class="section-title auth-title">LOGIN TO YOUR ACCOUNT</h2>
 
-        <?php if ($error): ?>
-            <div style="color: #ff4d4d; background: rgba(255,0,0,0.1); padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem;">
-                <p style="margin: 0; font-size: 0.85rem;"><?= htmlspecialchars($error); ?></p>
-            </div>
-        <?php endif; ?>
+        <div class="auth-card">
+            <?php if ($error): ?>
+                <div class="alert-error"><?= htmlspecialchars($error); ?></div>
+            <?php endif; ?>
 
-        <form action="login.php" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
-            <div>
-                <label style="font-size: 0.85rem; color: var(--text-muted);">Email Address</label>
-                <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: #fff;">
-            </div>
+            <form action="login.php" method="POST">
+                <div class="form-group">
+                    <label>EMAIL ADDRESS</label>
+                    <input type="email" name="email" required placeholder="e.g. user@example.com">
+                </div>
 
-            <div>
-                <label style="font-size: 0.85rem; color: var(--text-muted);">Password</label>
-                <input type="password" name="password" required style="width: 100%; padding: 0.75rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: #fff;">
-            </div>
+                <div class="form-group">
+                    <label>PASSWORD</label>
+                    <input type="password" name="password" required>
+                </div>
 
-            <button type="submit" class="book-btn" style="padding: 0.75rem; margin-top: 0.5rem; text-align: center;">Login</button>
-        </form>
+                <button type="submit" class="book-btn">LOGIN NOW</button>
+            </form>
+        </div>
     </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; <?= date("Y"); ?> NightLock. All rights reserved.</p>
+        </div>
+    </footer>
+
 </body>
 </html>

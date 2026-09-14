@@ -4,66 +4,40 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once 'db.php';
 
-// Auth Guard: Require logged in user
-if (!isset($_SESSION['user_id'])) {
+// Ensure admin access — must be logged in AND have admin role
+if (!isset($_SESSION['user_id']) || (int)$_SESSION['is_admin'] !== 1) {
     header('Location: login.php');
     exit;
 }
 
-// Admin Guard: Verify user is an admin
-$stmt = $pdo->prepare("SELECT is_admin FROM users WHERE id = :id");
-$stmt->execute(['id' => $_SESSION['user_id']]);
-$currentUser = $stmt->fetch();
+// Fetch all booking stats in a single query instead of 3 separate ones
+$stats = $pdo->query("
+    SELECT
+        COUNT(*) AS total,
+        SUM(LOWER(status) = 'pending')  AS pending,
+        SUM(LOWER(status) = 'approved') AS approved
+    FROM bookings
+")->fetch();
 
-if (!$currentUser || (int)$currentUser['is_admin'] !== 1) {
-    header('Location: profile.php');
-    exit;
-}
+$total_count   = $stats['total'];
+$pending_count = $stats['pending'];
+$approved_count = $stats['approved'];
 
-// Handle Action Requests (Approve / Cancel)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['booking_id'], $_POST['action'])) {
-    $booking_id = intval($_POST['booking_id']);
-    $action     = $_POST['action'];
-
-    $newStatus = ($action === 'approve') ? 'Confirmed' : (($action === 'cancel') ? 'Cancelled' : null);
-
-    if ($newStatus) {
-        $updateStmt = $pdo->prepare("UPDATE bookings SET status = :status WHERE id = :id");
-        $updateStmt->execute(['status' => $newStatus, 'id' => $booking_id]);
-        $_SESSION['success_message'] = "Booking #{$booking_id} status updated to {$newStatus}.";
-    }
-    header('Location: admin-dashboard.php');
-    exit;
-}
-
-// Fetch all bookings joined with user info
-$bookingsStmt = $pdo->query("
-    SELECT b.*, u.email 
-    FROM bookings b 
-    LEFT JOIN users u ON b.user_id = u.id 
+// Fetch bookings with User Email, Coach, and Booking Date
+$sql = "
+    SELECT 
+        b.id,
+        b.coach_name,
+        b.price,
+        b.booking_date,
+        b.status,
+        u.email AS user_email
+    FROM bookings b
+    LEFT JOIN users u ON b.user_id = u.id
     ORDER BY b.id DESC
-");
-$allBookings = $bookingsStmt->fetchAll();
-
-// Calculate Stats
-$totalBookings   = count($allBookings);
-$pendingBookings = 0;
-$totalRevenue    = 0;
-
-foreach ($allBookings as $b) {
-    $status = strtolower($b['status'] ?? '');
-    if ($status === 'pending') {
-        $pendingBookings++;
-    }
-    if ($status === 'confirmed') {
-        // Strip non-numeric currency characters for revenue total
-        $numericPrice = floatval(preg_replace('/[^\d.]/', '', $b['price'] ?? '0'));
-        $totalRevenue += $numericPrice;
-    }
-}
-
-$success = $_SESSION['success_message'] ?? null;
-unset($_SESSION['success_message']);
+";
+$stmt = $pdo->query($sql);
+$bookings = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,83 +51,77 @@ unset($_SESSION['success_message']);
 
     <?php include 'nav.php'; ?>
 
-    <main class="coaches-container">
-        <h2 class="section-title">ADMIN DASHBOARD</h2>
+    <main style="max-width: 1200px; margin: 0 auto; padding: 2rem 1rem;">
+        <h2 class="section-title" style="text-align: center; margin-bottom: 2rem;">ADMIN DASHBOARD</h2>
 
-        <?php if ($success): ?>
-            <div class="alert-success"><?= htmlspecialchars($success); ?></div>
-        <?php endif; ?>
-
-        <!-- OVERVIEW STATS -->
-        <div class="admin-stats-grid">
+        <!-- STATS CARDS -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
             <div class="stat-card">
-                <div>Total Sessions</div>
-                <div class="stat-number"><?= $totalBookings; ?></div>
+                <h4>Total Bookings</h4>
+                <span class="stat-value color-white"><?= $total_count; ?></span>
             </div>
             <div class="stat-card">
-                <div>Pending Actions</div>
-                <div class="stat-number"><?= $pendingBookings; ?></div>
+                <h4>Pending</h4>
+                <span class="stat-value color-pending"><?= $pending_count; ?></span>
             </div>
             <div class="stat-card">
-                <div>Confirmed Revenue</div>
-                <div class="stat-number">₱<?= number_format($totalRevenue, 2); ?></div>
+                <h4>Approved</h4>
+                <span class="stat-value color-approved"><?= $approved_count; ?></span>
             </div>
         </div>
 
-        <!-- RECENT BOOKINGS TABLE -->
-        <h2 class="section-title">BOOKING NOTIFICATIONS & MANAGEMENT</h2>
-        <div class="admin-table-wrapper">
-            <table class="admin-table">
+        <!-- BOOKINGS TABLE -->
+        <div class="admin-table-wrap">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 800px;">
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>User Email</th>
-                        <th>Coach</th>
-                        <th>Session</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.15); color: var(--text-muted, #8a8f99); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
+                        <th style="padding: 1rem;">User Email</th>
+                        <th style="padding: 1rem;">Coach</th>
+                        <th style="padding: 1rem; white-space: nowrap;">Date & Time</th>
+                        <th style="padding: 1rem;">Price</th>
+                        <th style="padding: 1rem;">Status</th>
+                        <th style="padding: 1rem; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (empty($allBookings)): ?>
+                    <?php if (empty($bookings)): ?>
                         <tr>
-                            <td colspan="7">No bookings found in database.</td>
+                            <td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-muted, #8a8f99);">No bookings found.</td>
                         </tr>
                     <?php else: ?>
-                        <?php foreach ($allBookings as $b): 
-                            $coach_name = $b['coach_name'] ?? $b['coach'] ?? 'Coach';
-                            $status     = $b['status'] ?? 'Pending';
-                            $status_lc  = strtolower($status);
+                        <?php foreach ($bookings as $b): 
+                            $status = strtolower($b['status'] ?? 'pending');
+                            $formatted_date = !empty($b['booking_date']) ? date('M j, Y - g:i A', strtotime($b['booking_date'])) : 'N/A';
                         ?>
-                            <tr>
-                                <td>#<?= htmlspecialchars($b['id']); ?></td>
-                                <td><?= htmlspecialchars($b['email'] ?? 'N/A'); ?></td>
-                                <td><?= htmlspecialchars($coach_name); ?></td>
-                                <td><?= htmlspecialchars($b['session_title'] ?? $b['session'] ?? ''); ?></td>
-                                <td><?= htmlspecialchars($b['price'] ?? ''); ?></td>
-                                <td>
-                                    <span class="booking-status-pill <?= $status_lc === 'cancelled' ? 'cancelled' : ''; ?>">
-                                        <?= htmlspecialchars($status); ?>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 1rem; white-space: nowrap;"><?= htmlspecialchars($b['user_email'] ?? 'N/A'); ?></td>
+                                <td style="padding: 1rem; font-weight: 600; color: #fff; white-space: nowrap;"><?= htmlspecialchars($b['coach_name'] ?? 'N/A'); ?></td>
+                                <td style="padding: 1rem; color: #ffc107; white-space: nowrap;"><?= htmlspecialchars($formatted_date); ?></td>
+                                <td style="padding: 1rem; white-space: nowrap;">₱<?= htmlspecialchars(number_format((float)($b['price'] ?? 0))); ?></td>
+                                <td style="padding: 1rem; white-space: nowrap;">
+                                    <span class="booking-status-pill <?= $status; ?>" style="padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-block;">
+                                        <?= ucfirst(htmlspecialchars($b['status'] ?? 'Pending')); ?>
                                     </span>
                                 </td>
-                                <td>
-                                    <div class="admin-action-group">
-                                        <?php if ($status_lc !== 'confirmed'): ?>
-                                            <form method="POST" action="admin-dashboard.php">
-                                                <input type="hidden" name="booking_id" value="<?= htmlspecialchars($b['id']); ?>">
-                                                <input type="hidden" name="action" value="approve">
-                                                <button type="submit" class="btn-approve">Approve</button>
-                                            </form>
-                                        <?php endif; ?>
+                                <td style="padding: 1rem; text-align: center; white-space: nowrap;">
+                                    <div style="display: flex; gap: 0.4rem; justify-content: center; align-items: center;">
+                                        <form action="update_status.php" method="POST" style="display:inline; margin:0;">
+                                            <input type="hidden" name="id" value="<?= $b['id']; ?>">
+                                            <input type="hidden" name="action" value="approve">
+                                            <button type="submit" style="background: #28a745; color: white; border: none; padding: 0.45rem 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">Approve</button>
+                                        </form>
+                                        
+                                        <form action="update_status.php" method="POST" style="display:inline; margin:0;">
+                                            <input type="hidden" name="id" value="<?= $b['id']; ?>">
+                                            <input type="hidden" name="action" value="cancel">
+                                            <button type="submit" style="background: #dc3545; color: white; border: none; padding: 0.45rem 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">Cancel</button>
+                                        </form>
 
-                                        <?php if ($status_lc !== 'cancelled'): ?>
-                                            <form method="POST" action="admin-dashboard.php">
-                                                <input type="hidden" name="booking_id" value="<?= htmlspecialchars($b['id']); ?>">
-                                                <input type="hidden" name="action" value="cancel">
-                                                <button type="submit" class="btn-cancel">Cancel</button>
-                                            </form>
-                                        <?php endif; ?>
+                                        <form action="update_status.php" method="POST" style="display:inline; margin:0;" onsubmit="return confirm('Remove this booking permanently?');">
+                                            <input type="hidden" name="id" value="<?= $b['id']; ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" style="background: #6c757d; color: white; border: none; padding: 0.45rem 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">Remove</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

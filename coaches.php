@@ -164,11 +164,11 @@ $community_coaches = array_slice($coach_list, 4);
                             <div class="comm-packages">
                                 <div class="package-tag">
                                     <span><?= htmlspecialchars($session['title']); ?></span>
-                                    <span class="tag-price"><?= htmlspecialchars($session['price']); ?></span>
                                 </div>
                             </div>
                         </div>
                         <div class="comm-action">
+                            <span class="price-text"><?= htmlspecialchars($session['price']); ?></span>
                             <a href="book.php?coach=<?= urlencode($coach['name']); ?>&session=<?= urlencode($session['title']); ?>&price=<?= urlencode($session['price']); ?>" class="book-btn">Book</a>
                         </div>
                     </div>
@@ -187,4 +187,4 @@ $community_coaches = array_slice($coach_list, 4);
     </footer>
 
 </body>
-</html>
+</html> 

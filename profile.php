@@ -11,12 +11,12 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch user account details with wildcard selection
-$userStmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
+// Fetch only the columns needed — avoids pulling sensitive data like password_hash
+$userStmt = $pdo->prepare("SELECT id, email, steam_id FROM users WHERE id = :user_id");
 $userStmt->execute(['user_id' => $user_id]);
 $user = $userStmt->fetch();
 
-// Resolve display name safely across variations (username, name, email)
+// Resolve display name safely
 $display_name = $user['username'] ?? $user['name'] ?? $user['full_name'] ?? (isset($user['email']) ? explode('@', $user['email'])[0] : 'User');
 
 // Fetch user's bookings
@@ -51,8 +51,21 @@ $initial = strtoupper(substr($display_name, 0, 1));
                 <?= htmlspecialchars($initial); ?>
             </div>
             <div class="profile-info">
-                <h3><?= htmlspecialchars($display_name); ?></h3>
-                <p><?= htmlspecialchars($user['email'] ?? 'No email on file'); ?></p>
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.5rem;"><?= htmlspecialchars($display_name); ?></h3>
+                
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                    <!-- Simple Google/Email Integration -->
+                    <a href="mailto:<?= htmlspecialchars($user['email']); ?>" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.2);">
+                        📧 <?= htmlspecialchars($user['email'] ?? 'No email on file'); ?>
+                    </a>
+
+                    <!-- Simple Steam Integration -->
+                    <?php if (!empty($user['steam_id'])): ?>
+                    <a href="https://steamcommunity.com/profiles/<?= htmlspecialchars($user['steam_id']); ?>" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #171a21; color: #66c0f4; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; border: 1px solid #66c0f4; font-weight: bold;">
+                        🎮 View Steam Profile
+                    </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 
@@ -76,12 +89,20 @@ $initial = strtoupper(substr($display_name, 0, 1));
                 <?php foreach ($bookings as $b): 
                     $coach_display = $b['coach_name'] ?? $b['coach'] ?? 'Coach';
                     $is_cancelled  = (strtolower($b['status'] ?? '') === 'cancelled');
+                    $date_formatted = !empty($b['booking_date']) ? date('M j, Y - g:i A', strtotime($b['booking_date'])) : null;
                 ?>
                     <div class="booking-item-card">
                         <div>
                             <h4 class="booking-title"><?= htmlspecialchars($coach_display); ?></h4>
                             <div class="sub-text"><?= htmlspecialchars($b['session_title'] ?? $b['session'] ?? ''); ?></div>
-                            <span class="price-text"><?= htmlspecialchars($b['price'] ?? ''); ?></span>
+                            
+                            <?php if ($date_formatted): ?>
+                                <div class="sub-text" style="color: var(--accent-gold); margin-top: 0.25rem;">
+                                    📅 <?= htmlspecialchars($date_formatted); ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="price-text" style="margin-top: 0.4rem;">₱<?= htmlspecialchars(number_format((float)($b['price'] ?? 0))); ?></div>
                         </div>
 
                         <div class="booking-actions">
@@ -109,4 +130,4 @@ $initial = strtoupper(substr($display_name, 0, 1));
     </footer>
 
 </body>
-</html> 
+</html>
