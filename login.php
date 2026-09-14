@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'db.php';
-
+//what
 $error = '';    
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
