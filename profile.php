@@ -51,21 +51,18 @@ $initial = strtoupper(substr($display_name, 0, 1));
                 <?= htmlspecialchars($initial); ?>
             </div>
             <div class="profile-info">
-                <h3 style="margin-bottom: 0.5rem; font-size: 1.5rem;"><?= htmlspecialchars($display_name); ?></h3>
-                
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
-                    <!-- Simple Google/Email Integration -->
-                    <a href="mailto:<?= htmlspecialchars($user['email']); ?>" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.2);">
-                        📧 <?= htmlspecialchars($user['email'] ?? 'No email on file'); ?>
-                    </a>
+                <h3 style="margin-bottom: 0.3rem; font-size: 1.5rem;"><?= htmlspecialchars($display_name); ?></h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.75rem;">
+                    <?= htmlspecialchars($user['email'] ?? 'No email on file'); ?>
+                </p>
 
-                    <!-- Simple Steam Integration -->
-                    <?php if (!empty($user['steam_id'])): ?>
-                    <a href="https://steamcommunity.com/profiles/<?= htmlspecialchars($user['steam_id']); ?>" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #171a21; color: #66c0f4; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; border: 1px solid #66c0f4; font-weight: bold;">
-                        🎮 View Steam Profile
-                    </a>
-                    <?php endif; ?>
-                </div>
+                <?php if (!empty($user['steam_id'])): ?>
+                    <div>
+                        <a href="https://steamcommunity.com/profiles/<?= htmlspecialchars($user['steam_id']); ?>" target="_blank" style="display: inline-flex; align-items: center; background: #171a21; color: #66c0f4; text-decoration: none; padding: 0.4rem 0.9rem; border-radius: 4px; font-size: 0.85rem; border: 1px solid #66c0f4; font-weight: 600; letter-spacing: 0.5px;">
+                            View Steam Profile
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -88,34 +85,51 @@ $initial = strtoupper(substr($display_name, 0, 1));
             <div class="community-list">
                 <?php foreach ($bookings as $b): 
                     $coach_display = $b['coach_name'] ?? $b['coach'] ?? 'Coach';
-                    $is_cancelled  = (strtolower($b['status'] ?? '') === 'cancelled');
+                    $status_raw    = strtolower(trim($b['status'] ?? 'pending'));
+                    $is_pending    = ($status_raw === 'pending');
+                    $is_approved   = ($status_raw === 'approved');
+                    $is_cancelled  = ($status_raw === 'cancelled');
                     $date_formatted = !empty($b['booking_date']) ? date('M j, Y - g:i A', strtotime($b['booking_date'])) : null;
+
+                    // Color badge styling
+                    if ($is_approved) {
+                        $badge_style = "background: rgba(77, 255, 136, 0.15); color: #4dff88; border: 1px solid #4dff88;";
+                    } elseif ($is_cancelled) {
+                        $badge_style = "background: rgba(255, 77, 77, 0.15); color: #ff4d4d; border: 1px solid #ff4d4d;";
+                    } else {
+                        $badge_style = "background: rgba(255, 183, 3, 0.15); color: #ffb703; border: 1px solid #ffb703;";
+                    }
                 ?>
-                    <div class="booking-item-card">
+                    <div class="booking-item-card" style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <h4 class="booking-title"><?= htmlspecialchars($coach_display); ?></h4>
-                            <div class="sub-text"><?= htmlspecialchars($b['session_title'] ?? $b['session'] ?? ''); ?></div>
+                            <h4 class="booking-title" style="font-size: 1.25rem; font-weight: 700; color: #fff;"><?= htmlspecialchars($coach_display); ?></h4>
+                            <div class="sub-text" style="font-size: 0.95rem;"><?= htmlspecialchars($b['session_title'] ?? $b['session'] ?? ''); ?></div>
                             
                             <?php if ($date_formatted): ?>
-                                <div class="sub-text" style="color: var(--accent-gold); margin-top: 0.25rem;">
-                                    📅 <?= htmlspecialchars($date_formatted); ?>
+                                <div class="sub-text" style="color: var(--accent-gold); margin-top: 0.35rem; font-size: 0.85rem;">
+                                    <?= htmlspecialchars($date_formatted); ?>
                                 </div>
                             <?php endif; ?>
-
-                            <div class="price-text" style="margin-top: 0.4rem;">₱<?= htmlspecialchars(number_format((float)($b['price'] ?? 0))); ?></div>
                         </div>
 
-                        <div class="booking-actions">
-                            <span class="booking-status-pill <?= $is_cancelled ? 'cancelled' : ''; ?>">
-                                <?= htmlspecialchars($b['status'] ?? 'Pending'); ?>
-                            </span>
+                        <div class="booking-actions" style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem;">
+                            <!-- Relocated bold price -->
+                            <div style="font-size: 1.25rem; font-weight: 700; color: var(--accent-gold);">
+                                ₱<?= htmlspecialchars(number_format((float)($b['price'] ?? 0))); ?>
+                            </div>
 
-                            <?php if (!$is_cancelled): ?>
-                                <form action="cancel-booking.php" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
-                                    <input type="hidden" name="booking_id" value="<?= htmlspecialchars($b['id']); ?>">
-                                    <button type="submit" class="btn-cancel">Cancel</button>
-                                </form>
-                            <?php endif; ?>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="padding: 0.3rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; <?= $badge_style; ?>">
+                                    <?= htmlspecialchars($b['status'] ?? 'Pending'); ?>
+                                </span>
+
+                                <?php if ($is_pending): ?>
+                                    <form action="cancel-booking.php" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?');" style="margin: 0;">
+                                        <input type="hidden" name="booking_id" value="<?= htmlspecialchars($b['id']); ?>">
+                                        <button type="submit" class="btn-cancel" style="cursor: pointer;">Cancel</button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>

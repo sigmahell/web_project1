@@ -28,5 +28,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['booking_id'])) {
     }
 }
 
-header('Location: my-bookings.php');
+header('Location: profile.php');
 exit;

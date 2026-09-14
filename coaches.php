@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'db.php';
+$title = "Coaches - NightLock";
+$description = "Learn from the best Deadlock players.";
 
 // Fetch coaches and their sessions from MySQL
 $sql = "
@@ -187,4 +189,4 @@ $community_coaches = array_slice($coach_list, 4);
     </footer>
 
 </body>
-</html> 
+</html>
