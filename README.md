@@ -1,2 +1,2 @@
 # web_project1
-Deadlock website project, Section A, Web Programming
+Deadlock (The Game) website project, Section A, Web Programming - 3rd Yr
